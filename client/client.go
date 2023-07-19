@@ -101,7 +101,7 @@ func DefaultConfig() Config {
 		},
 		Timeout:          60 * time.Second,
 		Retries:          3,
-		WithMetrics:      true,
+		WithMetrics:      false,
 		MetricsNamespace: "",
 	}
 }

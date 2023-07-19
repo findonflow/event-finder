@@ -17,14 +17,15 @@ package main
 import (
 	"context"
 	_ "embed"
+	"os"
+
 	"github.com/onflow/cadence"
-	"github.com/onflow/flow-batch-scan"
+	scanner "github.com/onflow/flow-batch-scan"
 	"github.com/onflow/flow-batch-scan/candidates"
 	"github.com/onflow/flow-batch-scan/client"
 	"github.com/onflow/flow-go-sdk"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
-	"os"
 )
 
 // Script is the Cadence script to be executed on each batch of accounts.
@@ -82,7 +83,7 @@ func main() {
 
 	// simple scripts can have a bigger batch size.
 	// because they are faster to execute and use less computation.
-	batchSize := 5000
+	batchSize := 500
 
 	config := scanner.DefaultConfig().
 		WithScript([]byte(Script)).

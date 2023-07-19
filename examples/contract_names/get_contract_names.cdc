@@ -1,10 +1,10 @@
 pub struct AccountInfo {
     pub(set) var address: Address
-    pub(set) var contracts: [String]
+    pub(set) var contracts: {String:String}
 
     init(_ address: Address) {
         self.address = address
-        self.contracts = []
+        self.contracts = {}
     }
 }
 
@@ -18,8 +18,18 @@ pub fun main(addresses: [Address]): [AccountInfo] {
             continue
         }
 
+        let contractMap : {String:String}= {}
+        for c in contracts {
+            if let dc=account.contracts.get(name:c) {
+                let code =String.fromUTF8(dc.code) ?? "unparsable"
+                contractMap[c]=code
+            }else {
+                contractMap[c]="not there"
+            }
+        }
+
         let info = AccountInfo(address)
-        info.contracts = contracts
+        info.contracts = contractMap
         infos.append(info)
     }
     return infos
