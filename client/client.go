@@ -97,10 +97,10 @@ func DefaultConfig() Config {
 			//"/flow.access.AccessAPI/GetBlockByHeight":           20,
 			//"/flow.access.AccessAPI/GetCollectionByID":          20,
 			//"/flow.access.AccessAPI/GetTransaction":             20,
-			"/flow.access.AccessAPI/ExecuteScriptAtBlockHeight": 3,
+			"/flow.access.AccessAPI/ExecuteScriptAtBlockHeight": 2,
 		},
 		Timeout:          60 * time.Second,
-		Retries:          3,
+		Retries:          10,
 		WithMetrics:      false,
 		MetricsNamespace: "",
 	}
