@@ -43,6 +43,7 @@ import (
 var Script string
 
 func main() {
+	fmt.Println(Script)
 	// Create a logger to output nice looking output to the console.
 	// Some output can also be found on the Debug level.
 	log.Logger = log.
