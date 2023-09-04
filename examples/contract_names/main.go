@@ -54,7 +54,7 @@ func main() {
 	// This uses `client.Client` from the flow-batch-scan package, which has some rate limits already set,
 	// and a timeout, in case the network is not responding.
 	flowClient, err := client.NewClient(
-		"access.testnet.nodes.onflow.org:9000",
+		"access.devnet.nodes.onflow.org:9000",
 		client.WithLog(log.Logger),
 	)
 	if err != nil {
