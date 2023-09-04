@@ -17,13 +17,19 @@ package main
 import (
 	"context"
 	_ "embed"
+	"encoding/json"
+	"fmt"
 	"os"
+	"strings"
 
+	"github.com/bjartek/overflow"
 	"github.com/onflow/cadence"
+	fbs "github.com/onflow/flow-batch-scan"
 	scanner "github.com/onflow/flow-batch-scan"
 	"github.com/onflow/flow-batch-scan/candidates"
 	"github.com/onflow/flow-batch-scan/client"
 	"github.com/onflow/flow-go-sdk"
+	"github.com/onflow/flow-go/utils/io"
 	"github.com/rs/zerolog"
 	"github.com/rs/zerolog/log"
 )
@@ -117,4 +123,63 @@ func main() {
 		Uint64("scan_complete_at_block", result.LatestScannedBlockHeight).
 		Bool("result_accurate", result.ScanIsComplete).
 		Msg("scanner finished")
+}
+
+type Record struct {
+	Contracts   []string
+	BlockHeight uint64
+}
+
+type scriptResultHandler struct {
+	logger zerolog.Logger
+}
+
+// NewScriptResultHandler is a simple result handler that prints the results to the log.
+func NewScriptResultHandler(
+	logger zerolog.Logger,
+) fbs.ScriptResultHandler {
+	h := &scriptResultHandler{
+		logger: logger,
+	}
+	return h
+}
+
+func (r *scriptResultHandler) Handle(batch fbs.ProcessedAddressBatch) error {
+
+	//read as overflow value
+	value, err := overflow.CadenceValueToJsonString(batch.Result)
+	if err != nil {
+		r.logger.Error().Err(err).Msg("cadence value convert")
+		return nil
+	}
+
+	if strings.TrimSpace(value) == "" {
+		return nil
+	}
+
+	var contracts []Contract
+	err = json.Unmarshal([]byte(value), &contracts)
+	if err != nil {
+		r.logger.Error().Err(err).Str("input", value).Msg("marshal to contract")
+		return nil
+	}
+	for _, c := range contracts {
+		prefix := strings.TrimPrefix(c.Address, "0x")
+		for name, body := range c.Contracts {
+			bodyBytes := []byte(body)
+			fileName := fmt.Sprintf("result/A.%s.%s.cdc", prefix, name)
+			err := io.WriteFile(fileName, bodyBytes)
+			if err != nil {
+				return err
+			}
+
+			//	r.logger.Info().Msg(fileName)
+		}
+	}
+	return nil
+}
+
+type Contract struct {
+	Address   string
+	Contracts map[string]string
 }
