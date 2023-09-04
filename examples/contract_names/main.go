@@ -90,7 +90,7 @@ func main() {
 
 	// simple scripts can have a bigger batch size.
 	// because they are faster to execute and use less computation.
-	batchSize := 500
+	batchSize := 200
 
 	config := scanner.DefaultConfig().
 		WithScript([]byte(Script)).
